@@ -8,7 +8,7 @@ Welcome to the **Make_Bluprints** repository—an organized collection of automa
 
 ### Typeform-Air-Slack
 **Description:** Captures responses from Typeform, stores relevant data fields in Airtable (e.g., Name, Email, Interest Level, Need), and sends Slack direct messages for notification purposes.
-![Typeform-Airslack](https://drive.google.com/file/d/1OpZKDUvdeOV2CU_pgIqMBHzhRik-vQL1/view?usp=sharing)
+![Typeform-Airslack](assets/typeform_airslack.png)
 
 ### LinkedIn Email Scraper
 **Description:** Monitors Google Sheets for new search keywords, triggers Apify actor to scrape LinkedIn emails, and appends the results directly back to Sheets.
