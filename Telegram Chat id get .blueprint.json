@@ -12,7 +12,7 @@
             "mapper": {
                 "ca": "",
                 "qs": [],
-                "url": "https://api.telegram.org/bot8540987018:AAF_8fILKGOR_xhhDQGApkw2P4zqywbGQLg/getUpdates",
+                "url": "https://api.telegram.org/bot<TELEGRAM_BOT_TOKEN>/getUpdates",
                 "gzip": true,
                 "method": "get",
                 "headers": [],
