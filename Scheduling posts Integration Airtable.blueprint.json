@@ -1,0 +1,1002 @@
+{
+    "name": "Scheduling posts Integration Airtable",
+    "flow": [
+        {
+            "id": 1,
+            "module": "airtable:TriggerWatchRecords",
+            "version": 3,
+            "parameters": {
+                "__IMTCONN__": 3828862,
+                "base": "apps2zipc3tlAtouX",
+                "useColumnId": false,
+                "table": "tbl9XxAQ0LBurack4",
+                "config": {
+                    "triggerField": "Last Updated Time",
+                    "labelField": "Status"
+                },
+                "maxRecords": 10,
+                "view": "viwNQ5JNkWPffqdbK",
+                "formula": ""
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 150
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "label": "My Airtable Token or Key connection (User ID: usrOBtLFcU75xk90E)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "airtable3"
+                            }
+                        },
+                        "base": {
+                            "label": "MAKE.COM"
+                        },
+                        "table": {
+                            "label": "Ideas"
+                        },
+                        "config": {
+                            "nested": {
+                                "triggerField": {
+                                    "label": "Last Updated Time"
+                                },
+                                "labelField": {
+                                    "label": "Status"
+                                }
+                            }
+                        },
+                        "view": {
+                            "label": "Grid view"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:airtable3,airtable2",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "base",
+                        "type": "select",
+                        "label": "Base",
+                        "required": true
+                    },
+                    {
+                        "name": "useColumnId",
+                        "type": "boolean",
+                        "label": "Use Column ID",
+                        "required": true
+                    },
+                    {
+                        "name": "table",
+                        "type": "select",
+                        "label": "Table",
+                        "required": true
+                    },
+                    {
+                        "name": "config",
+                        "type": "collection",
+                        "label": "Trigger configuration",
+                        "spec": [
+                            {
+                                "name": "triggerField",
+                                "type": "select",
+                                "label": "Trigger field",
+                                "required": true
+                            },
+                            {
+                                "name": "triggerField",
+                                "type": "hidden"
+                            },
+                            {
+                                "name": "labelField",
+                                "type": "select",
+                                "label": "Label field",
+                                "required": true
+                            }
+                        ]
+                    },
+                    {
+                        "name": "maxRecords",
+                        "type": "integer",
+                        "label": "Limit",
+                        "required": true
+                    },
+                    {
+                        "name": "view",
+                        "type": "select",
+                        "label": "View"
+                    },
+                    {
+                        "name": "formula",
+                        "type": "text",
+                        "label": "Formula"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                    },
+                    {
+                        "name": "createdTime",
+                        "type": "date",
+                        "label": "Created Time"
+                    },
+                    {
+                        "name": "Title",
+                        "label": "Title",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Idea Text",
+                        "label": "Idea Text",
+                        "type": "text",
+                        "multiline": true
+                    },
+                    {
+                        "name": "Platform",
+                        "label": "Platform",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Status",
+                        "label": "Status",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Scheduled At",
+                        "label": "Scheduled At",
+                        "type": "date",
+                        "time": true
+                    },
+                    {
+                        "name": "Notes",
+                        "label": "Notes",
+                        "type": "text",
+                        "multiline": true
+                    },
+                    {
+                        "name": "Priority",
+                        "label": "Priority",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Created Time",
+                        "label": "Created Time",
+                        "type": "date"
+                    },
+                    {
+                        "name": "Last Updated Time",
+                        "label": "Last Updated Time",
+                        "type": "date"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 150
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 6,
+                            "module": "buffer:ActionCreateStatus",
+                            "version": 2,
+                            "parameters": {
+                                "account": 3854203
+                            },
+                            "filter": {
+                                "name": "Scheduled",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{1.Status}}",
+                                            "b": "scheduled",
+                                            "o": "text:equal"
+                                        },
+                                        {
+                                            "a": "{{1.Platform}}",
+                                            "b": "LinkedIn",
+                                            "o": "text:equal"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "profileIds": [
+                                    "692f03d829ea336fd646ca7a"
+                                ],
+                                "text": "{{1.Title}}\n{{1.`Idea Text`}}\n{{1.Status}}\n{{1.`Scheduled At`}}",
+                                "type": "scheduled",
+                                "useMedia": true,
+                                "shorten": true,
+                                "attachment": false,
+                                "dateScheduled": "{{1.`Scheduled At`}}",
+                                "media": {
+                                    "link": "https://www.google.com/search?sca_esv=39fb4ce6952c9081&sxsrf=AE3TifNlWCkdESkENTupvzFxW6VCf_iAqw:1764576500192&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZ1Y6MJ25_tmWITc7uy4KIeuYzzFkfneXafNx6OMdA4MQRJc_t_TQjwHYrzlkIauOK_IaFSQcTHs2AgJbmYqOLNkKKJQfQGyrVZPSfyHC1o7w3STZ2vzY1otFmVQJB6XrX6eZ6J4yI3GBRIDW_N7Y03vVXqwNjFQxcKaOBaBbveBkZBP_1U_LV7uoB7yIXd7EGHGtSfQ&q=ai+automation&sa=X&sqi=2&ved=2ahUKEwjj_uPb95uRAxWcSPEDHUc8CtsQtKgLegQIHhAB&biw=1536&bih=695&dpr=1.25#vhid=_3-O1qZbFFjCqM&vssid=mosaic",
+                                    "title": "",
+                                    "description": "",
+                                    "picture": "",
+                                    "thumbnail": ""
+                                }
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 600,
+                                    "y": 0
+                                },
+                                "restore": {
+                                    "parameters": {
+                                        "account": {
+                                            "label": "My Buffer connection",
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "buffer"
+                                            }
+                                        }
+                                    },
+                                    "expect": {
+                                        "profileIds": {
+                                            "mode": "chose",
+                                            "label": [
+                                                "LinkedIn (mohammed-boru-48b40b1b3)"
+                                            ]
+                                        },
+                                        "type": {
+                                            "label": "Post an update at scheduled date and time"
+                                        },
+                                        "shorten": {
+                                            "mode": "chose"
+                                        },
+                                        "attachment": {
+                                            "mode": "chose"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "account",
+                                        "type": "account:buffer",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "profileIds",
+                                        "type": "select",
+                                        "label": "Profiles",
+                                        "required": true,
+                                        "multiple": true
+                                    },
+                                    {
+                                        "name": "profileIds",
+                                        "type": "select",
+                                        "label": "Profiles",
+                                        "required": true,
+                                        "multiple": true
+                                    },
+                                    {
+                                        "name": "text",
+                                        "type": "text",
+                                        "label": "Text",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "type",
+                                        "type": "select",
+                                        "label": "Publication",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "now",
+                                                "top",
+                                                "queue",
+                                                "scheduled"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "useMedia",
+                                        "type": "boolean",
+                                        "label": "Attach media to the update",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "shorten",
+                                        "type": "boolean",
+                                        "label": "Shorten links within text",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "attachment",
+                                        "type": "boolean",
+                                        "label": "Attach links in the text as media",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "dateScheduled",
+                                        "type": "date",
+                                        "label": "Date scheduled",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "media",
+                                        "type": "collection",
+                                        "label": "Media",
+                                        "spec": [
+                                            {
+                                                "name": "link",
+                                                "type": "url",
+                                                "label": "Link"
+                                            },
+                                            {
+                                                "name": "title",
+                                                "type": "text",
+                                                "label": "Title"
+                                            },
+                                            {
+                                                "name": "description",
+                                                "type": "text",
+                                                "label": "Description"
+                                            },
+                                            {
+                                                "name": "picture",
+                                                "type": "url",
+                                                "label": "Link to an image"
+                                            },
+                                            {
+                                                "name": "thumbnail",
+                                                "type": "url",
+                                                "label": "Thumbnail"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 7,
+                            "module": "airtable:ActionUpdateRecords",
+                            "version": 3,
+                            "parameters": {
+                                "__IMTCONN__": 3828862
+                            },
+                            "mapper": {
+                                "id": "{{1.id}}",
+                                "base": "apps2zipc3tlAtouX",
+                                "table": "tbl9XxAQ0LBurack4",
+                                "record": {
+                                    "fldeTBhSk2p4RsrmL": "Scheduled for start",
+                                    "fldtFyg0n9hGlWmOJ": "Medium"
+                                },
+                                "typecast": false,
+                                "useColumnId": false
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 0
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "base": {
+                                            "label": "MAKE.COM"
+                                        },
+                                        "table": {
+                                            "label": "Ideas"
+                                        },
+                                        "record": {
+                                            "nested": {
+                                                "fldMT58fxYmj6uhEi": {
+                                                    "mode": "edit"
+                                                },
+                                                "fldsli5V14YgjIj2g": {
+                                                    "mode": "edit"
+                                                },
+                                                "fldtFyg0n9hGlWmOJ": {
+                                                    "mode": "chose",
+                                                    "label": "Medium"
+                                                }
+                                            }
+                                        },
+                                        "typecast": {
+                                            "mode": "chose"
+                                        },
+                                        "useColumnId": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "airtable3"
+                                            },
+                                            "label": "My Airtable Token or Key connection (User ID: usrOBtLFcU75xk90E)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:airtable3,airtable2",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "base",
+                                        "type": "select",
+                                        "label": "Base",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "typecast",
+                                        "type": "boolean",
+                                        "label": "Smart links",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useColumnId",
+                                        "type": "boolean",
+                                        "label": "Use Column ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "table",
+                                        "type": "select",
+                                        "label": "Table",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "Record ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "record",
+                                        "spec": [
+                                            {
+                                                "name": "fldnPITSwVVjLLSCQ",
+                                                "type": "text",
+                                                "label": "Title"
+                                            },
+                                            {
+                                                "name": "fldSaCPadpvhzhvEL",
+                                                "type": "text",
+                                                "label": "Idea Text"
+                                            },
+                                            {
+                                                "mode": "edit",
+                                                "name": "fldsli5V14YgjIj2g",
+                                                "type": "select",
+                                                "label": "Platform"
+                                            },
+                                            {
+                                                "mode": "edit",
+                                                "name": "fldMT58fxYmj6uhEi",
+                                                "type": "select",
+                                                "label": "Status"
+                                            },
+                                            {
+                                                "name": "fldml0qrzHhPuzCs5",
+                                                "time": true,
+                                                "type": "date",
+                                                "label": "Scheduled At"
+                                            },
+                                            {
+                                                "name": "fldeTBhSk2p4RsrmL",
+                                                "type": "text",
+                                                "label": "Notes"
+                                            },
+                                            {
+                                                "mode": "edit",
+                                                "name": "fldtFyg0n9hGlWmOJ",
+                                                "type": "select",
+                                                "label": "Priority"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Record"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "ID"
+                                    },
+                                    {
+                                        "name": "createdTime",
+                                        "type": "date",
+                                        "label": "Created Time"
+                                    },
+                                    {
+                                        "name": "Title",
+                                        "type": "text",
+                                        "label": "Title"
+                                    },
+                                    {
+                                        "name": "Idea Text",
+                                        "type": "text",
+                                        "label": "Idea Text",
+                                        "multiline": true
+                                    },
+                                    {
+                                        "name": "Platform",
+                                        "type": "text",
+                                        "label": "Platform"
+                                    },
+                                    {
+                                        "name": "Status",
+                                        "type": "text",
+                                        "label": "Status"
+                                    },
+                                    {
+                                        "name": "Scheduled At",
+                                        "time": true,
+                                        "type": "date",
+                                        "label": "Scheduled At"
+                                    },
+                                    {
+                                        "name": "Notes",
+                                        "type": "text",
+                                        "label": "Notes",
+                                        "multiline": true
+                                    },
+                                    {
+                                        "name": "Priority",
+                                        "type": "text",
+                                        "label": "Priority"
+                                    },
+                                    {
+                                        "name": "Created Time",
+                                        "type": "date",
+                                        "label": "Created Time"
+                                    },
+                                    {
+                                        "name": "Last Updated Time",
+                                        "type": "date",
+                                        "label": "Last Updated Time"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 12,
+                            "module": "buffer:ActionCreateStatus",
+                            "version": 2,
+                            "parameters": {
+                                "account": 3854203
+                            },
+                            "filter": {
+                                "name": "Live",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{1.Status}}",
+                                            "b": "live",
+                                            "o": "text:equal"
+                                        },
+                                        {
+                                            "a": "{{1.Platform}}",
+                                            "b": "LinkedIn",
+                                            "o": "text:equal"
+                                        }
+                                    ]
+                                ]
+                            },
+                            "mapper": {
+                                "profileIds": [
+                                    "692f03d829ea336fd646ca7a"
+                                ],
+                                "text": "{{1.Title}}\n{{1.`Idea Text`}}\n{{1.Status}}\n{{1.`Scheduled At`}}",
+                                "type": "scheduled",
+                                "useMedia": true,
+                                "shorten": true,
+                                "attachment": true,
+                                "dateScheduled": "{{1.`Scheduled At`}}",
+                                "media": {
+                                    "link": "https://www.google.com/search?sca_esv=39fb4ce6952c9081&sxsrf=AE3TifNlWCkdESkENTupvzFxW6VCf_iAqw:1764576500192&udm=2&fbs=AIIjpHxU7SXXniUZfeShr2fp4giZ1Y6MJ25_tmWITc7uy4KIeuYzzFkfneXafNx6OMdA4MQRJc_t_TQjwHYrzlkIauOK_IaFSQcTHs2AgJbmYqOLNkKKJQfQGyrVZPSfyHC1o7w3STZ2vzY1otFmVQJB6XrX6eZ6J4yI3GBRIDW_N7Y03vVXqwNjFQxcKaOBaBbveBkZBP_1U_LV7uoB7yIXd7EGHGtSfQ&q=ai+automation&sa=X&sqi=2&ved=2ahUKEwjj_uPb95uRAxWcSPEDHUc8CtsQtKgLegQIHhAB&biw=1536&bih=695&dpr=1.25#vhid=_3-O1qZbFFjCqM&vssid=mosaic",
+                                    "title": "",
+                                    "description": "",
+                                    "picture": "",
+                                    "thumbnail": ""
+                                }
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 600,
+                                    "y": 300
+                                },
+                                "restore": {
+                                    "parameters": {
+                                        "account": {
+                                            "label": "My Buffer connection (mohammed-boru-48b40b1b3)",
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "buffer"
+                                            }
+                                        }
+                                    },
+                                    "expect": {
+                                        "profileIds": {
+                                            "mode": "chose",
+                                            "label": [
+                                                "LinkedIn (mohammed-boru-48b40b1b3)"
+                                            ]
+                                        },
+                                        "type": {
+                                            "label": "Post an update at scheduled date and time"
+                                        },
+                                        "shorten": {
+                                            "mode": "chose"
+                                        },
+                                        "attachment": {
+                                            "mode": "chose"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "account",
+                                        "type": "account:buffer",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "profileIds",
+                                        "type": "select",
+                                        "label": "Profiles",
+                                        "required": true,
+                                        "multiple": true
+                                    },
+                                    {
+                                        "name": "profileIds",
+                                        "type": "select",
+                                        "label": "Profiles",
+                                        "required": true,
+                                        "multiple": true
+                                    },
+                                    {
+                                        "name": "text",
+                                        "type": "text",
+                                        "label": "Text",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "type",
+                                        "type": "select",
+                                        "label": "Publication",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "now",
+                                                "top",
+                                                "queue",
+                                                "scheduled"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "useMedia",
+                                        "type": "boolean",
+                                        "label": "Attach media to the update",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "shorten",
+                                        "type": "boolean",
+                                        "label": "Shorten links within text",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "attachment",
+                                        "type": "boolean",
+                                        "label": "Attach links in the text as media",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "dateScheduled",
+                                        "type": "date",
+                                        "label": "Date scheduled",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "media",
+                                        "type": "collection",
+                                        "label": "Media",
+                                        "spec": [
+                                            {
+                                                "name": "link",
+                                                "type": "url",
+                                                "label": "Link"
+                                            },
+                                            {
+                                                "name": "title",
+                                                "type": "text",
+                                                "label": "Title"
+                                            },
+                                            {
+                                                "name": "description",
+                                                "type": "text",
+                                                "label": "Description"
+                                            },
+                                            {
+                                                "name": "picture",
+                                                "type": "url",
+                                                "label": "Link to an image"
+                                            },
+                                            {
+                                                "name": "thumbnail",
+                                                "type": "url",
+                                                "label": "Thumbnail"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            "id": 10,
+                            "module": "airtable:ActionUpdateRecords",
+                            "version": 3,
+                            "parameters": {
+                                "__IMTCONN__": 3828862
+                            },
+                            "mapper": {
+                                "id": "{{1.id}}",
+                                "base": "apps2zipc3tlAtouX",
+                                "table": "tbl9XxAQ0LBurack4",
+                                "record": {
+                                    "fldeTBhSk2p4RsrmL": "Currently ongoing",
+                                    "fldtFyg0n9hGlWmOJ": "High"
+                                },
+                                "typecast": false,
+                                "useColumnId": false
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 300
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "base": {
+                                            "label": "MAKE.COM"
+                                        },
+                                        "table": {
+                                            "label": "Ideas"
+                                        },
+                                        "record": {
+                                            "nested": {
+                                                "fldMT58fxYmj6uhEi": {
+                                                    "mode": "edit"
+                                                },
+                                                "fldsli5V14YgjIj2g": {
+                                                    "mode": "edit"
+                                                },
+                                                "fldtFyg0n9hGlWmOJ": {
+                                                    "mode": "chose",
+                                                    "label": "High"
+                                                }
+                                            }
+                                        },
+                                        "typecast": {
+                                            "mode": "chose"
+                                        },
+                                        "useColumnId": {
+                                            "mode": "chose"
+                                        }
+                                    },
+                                    "parameters": {
+                                        "__IMTCONN__": {
+                                            "data": {
+                                                "scoped": "true",
+                                                "connection": "airtable3"
+                                            },
+                                            "label": "My Airtable Token or Key connection (User ID: usrOBtLFcU75xk90E)"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:airtable3,airtable2",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "base",
+                                        "type": "select",
+                                        "label": "Base",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "typecast",
+                                        "type": "boolean",
+                                        "label": "Smart links",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "useColumnId",
+                                        "type": "boolean",
+                                        "label": "Use Column ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "table",
+                                        "type": "select",
+                                        "label": "Table",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "Record ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "record",
+                                        "spec": [
+                                            {
+                                                "name": "fldnPITSwVVjLLSCQ",
+                                                "type": "text",
+                                                "label": "Title"
+                                            },
+                                            {
+                                                "name": "fldSaCPadpvhzhvEL",
+                                                "type": "text",
+                                                "label": "Idea Text"
+                                            },
+                                            {
+                                                "mode": "edit",
+                                                "name": "fldsli5V14YgjIj2g",
+                                                "type": "select",
+                                                "label": "Platform"
+                                            },
+                                            {
+                                                "mode": "edit",
+                                                "name": "fldMT58fxYmj6uhEi",
+                                                "type": "select",
+                                                "label": "Status"
+                                            },
+                                            {
+                                                "name": "fldml0qrzHhPuzCs5",
+                                                "time": true,
+                                                "type": "date",
+                                                "label": "Scheduled At"
+                                            },
+                                            {
+                                                "name": "fldeTBhSk2p4RsrmL",
+                                                "type": "text",
+                                                "label": "Notes"
+                                            },
+                                            {
+                                                "mode": "edit",
+                                                "name": "fldtFyg0n9hGlWmOJ",
+                                                "type": "select",
+                                                "label": "Priority"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Record"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "id",
+                                        "type": "text",
+                                        "label": "ID"
+                                    },
+                                    {
+                                        "name": "createdTime",
+                                        "type": "date",
+                                        "label": "Created Time"
+                                    },
+                                    {
+                                        "name": "Title",
+                                        "type": "text",
+                                        "label": "Title"
+                                    },
+                                    {
+                                        "name": "Idea Text",
+                                        "type": "text",
+                                        "label": "Idea Text",
+                                        "multiline": true
+                                    },
+                                    {
+                                        "name": "Platform",
+                                        "type": "text",
+                                        "label": "Platform"
+                                    },
+                                    {
+                                        "name": "Status",
+                                        "type": "text",
+                                        "label": "Status"
+                                    },
+                                    {
+                                        "name": "Scheduled At",
+                                        "time": true,
+                                        "type": "date",
+                                        "label": "Scheduled At"
+                                    },
+                                    {
+                                        "name": "Notes",
+                                        "type": "text",
+                                        "label": "Notes",
+                                        "multiline": true
+                                    },
+                                    {
+                                        "name": "Priority",
+                                        "type": "text",
+                                        "label": "Priority"
+                                    },
+                                    {
+                                        "name": "Created Time",
+                                        "type": "date",
+                                        "label": "Created Time"
+                                    },
+                                    {
+                                        "name": "Last Updated Time",
+                                        "type": "date",
+                                        "label": "Last Updated Time"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}

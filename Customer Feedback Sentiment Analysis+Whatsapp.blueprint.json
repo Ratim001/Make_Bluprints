@@ -1,0 +1,261 @@
+{
+    "name": "Customer Feedback Sentiment Analysis+Whatsapp",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "hook": 2185833,
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "hook": {
+                            "data": {
+                                "editable": "true"
+                            },
+                            "label": "My gateway-webhook webhook"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook",
+                        "required": true
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "number",
+                        "label": "Maximum number of results"
+                    }
+                ],
+                "interface": [
+                    {
+                        "name": "Name",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Age",
+                        "type": "text"
+                    },
+                    {
+                        "name": "Feedback",
+                        "type": "text"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "ai-tools:AnalyzeSentiment",
+            "version": 2,
+            "parameters": {
+                "makeConnectionId": 3937085,
+                "model": "large"
+            },
+            "mapper": {
+                "input": "{{1.Name}}\n{{1.Age}}\n{{1.Feedback}}",
+                "shouldGenerateDescription": true
+            },
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "makeConnectionId": {
+                            "nested": [
+                                {
+                                    "name": "model",
+                                    "type": "select",
+                                    "label": "Model",
+                                    "options": {
+                                        "store": "rpc://ai-tools/2/RpcGetModels?connectionId={{makeConnectionId}}&teamId=589728"
+                                    },
+                                    "mappable": true,
+                                    "required": true,
+                                    "forceReload": true
+                                }
+                            ],
+                            "label": "My Make's AI Provider connection",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "ai-provider"
+                            }
+                        },
+                        "model": {
+                            "mode": "chose",
+                            "label": "Large (GPT-5 Mini)"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "makeConnectionId",
+                        "type": "account:ai-provider,openai-gpt-3,anthropic-claude,gemini-ai-q9zyjp,ai-agent-foundry-openai,ai-agent-foundry-non-openai,mistral-ai,cohere,groq,ai-agent-xai,amazon-bedrock,ai-agent-openai-compatible",
+                        "label": "Connection",
+                        "required": true
+                    },
+                    {
+                        "name": "model",
+                        "type": "select",
+                        "label": "Model",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "input",
+                        "type": "text",
+                        "label": "Text to analyze",
+                        "required": true
+                    },
+                    {
+                        "name": "shouldGenerateDescription",
+                        "type": "boolean",
+                        "label": "Return a description of the sentiment",
+                        "required": true
+                    }
+                ]
+            }
+        },
+        {
+            "id": 5,
+            "module": "green-api:SendMessage",
+            "version": 1,
+            "parameters": {
+                "__IMTCONN__": 3937515
+            },
+            "mapper": {
+                "chatIdSource": "manual",
+                "message": "Name:{{1.Name}}\nAge:{{1.Age}}\nSentiment Analyzed as:{{2.sentiment}}\nDescription:{{2.description}}",
+                "typingCheck": false,
+                "linkPreview": false,
+                "chatId": "254700660468@c.us",
+                "format": false
+            },
+            "metadata": {
+                "designer": {
+                    "x": 600,
+                    "y": 0
+                },
+                "restore": {
+                    "parameters": {
+                        "__IMTCONN__": {
+                            "label": "My GREEN-API connection (7105412351 - 254700660468@c.us)",
+                            "data": {
+                                "scoped": "true",
+                                "connection": "green-api"
+                            }
+                        }
+                    },
+                    "expect": {
+                        "chatIdSource": {
+                            "mode": "chose",
+                            "label": "Manual"
+                        },
+                        "typingCheck": {
+                            "mode": "chose"
+                        },
+                        "linkPreview": {
+                            "mode": "chose"
+                        },
+                        "format": {
+                            "mode": "chose"
+                        }
+                    }
+                },
+                "parameters": [
+                    {
+                        "name": "__IMTCONN__",
+                        "type": "account:green-api",
+                        "label": "Connection",
+                        "required": true
+                    }
+                ],
+                "expect": [
+                    {
+                        "name": "chatIdSource",
+                        "type": "select",
+                        "label": "Chat ID source",
+                        "required": true,
+                        "validate": {
+                            "enum": [
+                                "manual",
+                                "contactList"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "message",
+                        "type": "text",
+                        "validate": {
+                            "max": 20000,
+                            "min": 1
+                        },
+                        "required": true
+                    },
+                    {
+                        "name": "typingCheck",
+                        "type": "boolean",
+                        "label": "Typing Status",
+                        "required": true
+                    },
+                    {
+                        "name": "quotedMessageId",
+                        "type": "text"
+                    },
+                    {
+                        "name": "linkPreview",
+                        "type": "boolean",
+                        "label": "Link Preview",
+                        "required": true
+                    },
+                    {
+                        "name": "chatId",
+                        "type": "text",
+                        "label": "Chat Id",
+                        "required": true
+                    },
+                    {
+                        "name": "format",
+                        "type": "boolean",
+                        "label": "Number format",
+                        "required": true
+                    }
+                ]
+            }
+        }
+    ],
+    "metadata": {
+        "instant": false,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "zone": "eu1.make.com",
+        "notes": []
+    }
+}
